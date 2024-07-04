@@ -1,6 +1,6 @@
-my_string = input("Введите что-нибудь: ")
-print(my_string.upper())
-print(my_string.lower())
-print(my_string.replace(' ', ''))
-print(my_string[0])
-print(my_string[-1])
+immutable_var = (1, "Arr", True)
+print(f"Immutable tuple: {immutable_var}")
+mutable_var = [1, "Arr", True]
+print(f"Mutable list: {mutable_var}")
+mutable_var[0] = 2
+print(f"New mutable list: {mutable_var}")
