@@ -1,6 +1,8 @@
-count_done_homeworks = 12
-spent_hours = 1.5
-course_name = 'Python'
-hours_for_exercise = spent_hours/count_done_homeworks
-print(f"Курс: {course_name}, всего задач: {count_done_homeworks},"
-f"затрачено часов: {spent_hours}, среднее время выполнения: {hours_for_exercise} часа")
+name = "Artem"
+print(f"Name: {name}")
+age = 20
+print(f"Age: {age}")
+new_age = age + 1
+print(f"New age: {new_age}")
+is_student = True
+print(f"Is student: {is_student}")
