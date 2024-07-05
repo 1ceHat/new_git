@@ -1,20 +1,16 @@
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-numbers.remove(1)
-primes = []
-not_primes = []
+def get_matrix(n, m, value):
+    matrix = []
+    for i in range(n):
+        matrix.append([])
+        for j in range(m):
+            matrix[i].append(value)
 
-for number in numbers:
-    sqrt = int(number**0.5)
-    del_count = 1
-    for i in range(1, sqrt+1):
-        if number % i == 0:
-            del_count += 1
-        if del_count > 2:
-            break
-    if del_count < 3:
-        primes.append(number)
-    else:
-        not_primes.append(number)
+    return matrix
 
-print(f"Простые числа {primes}")
-print(f"Не простые числа {not_primes}")
+
+result1 = get_matrix(2, 2, 10)
+result2 = get_matrix(3, 5, 42)
+result3 = get_matrix(4, 2, 13)
+print(result1)
+print(result2)
+print(result3)
