@@ -1,10 +1,11 @@
-first = int(input("Введите первое число: "))
-second = int(input("Введите второе число: "))
-third = int(input("Введите третье число: "))
-
-if first == second and first == third:
-    print(3)
-elif (first == second and first != third) or (first != second and first == third) or (third == second and first != third):
-    print(2)
-elif first != second and first != third and second != third:
-    print(0)
+my_list = [42, 69, 0, 322, 13, 0, 99, -5, 9, 8, 7, -6, 5]
+i = 0
+while i < len(my_list):
+    if my_list[i] > 0:
+        print(my_list[i])
+    if my_list[i] < 0:
+        break
+    if my_list[i] == 0:
+        i += 1
+        continue
+    i += 1
