@@ -1,34 +1,29 @@
-calls = 0
+def send_email(message, recipient, *, sender="university.help@gmail.com"):
 
 
-def count_calls():
-    global calls
-    calls += 1
+    domains = ['.com', '.ru', '.net'] # возможные почтовые домены
+    recipients_domain = recipient[recipient.rfind('.'):] # домен получателя
+    senders_domain = sender[sender.rfind('.'):] # домен отправителя
 
-
-def string_info(string='string'):
-    count_calls()
-    return len(string), string.upper(), string.lower()
-
-
-def is_contains(string_info='string', list_to_search=['stri', 'strin', 'string1']):
-    count_calls()
-    # перевели пришедшие данные в строковый тип с нижним написанием
-    for i in range(len(list_to_search)):
-        list_to_search[i] = str(list_to_search[i]).lower()
-    string_info = str(string_info).lower()
-
-    if string_info in list_to_search:
-        return True
-    else:
+    # проверка адреса отправителя и получателя
+    if ('@' not in recipient or recipients_domain not in domains) \
+            or ('@' not in sender or senders_domain not in domains):
+        print(f'Невозможно отправить письмо с адреса {sender} на адрес {recipient}!')
         return False
 
+    if recipient == sender:
+        print('Нельзя отправить письмо самому себе!')
+        return False
 
-list1 = ['ban', 'BaNaN', 'urBAN']
-list2 = ['recycling', 'cyclic']
+    if sender == "university.help@gmail.com":
+        print(f'Письмо успешно отправлено с адреса {sender} на адрес {recipient}.')
+        return True
+    else:
+        print(f'НЕСТАНДАРТНЫЙ ОТПРАВИТЕЛЬ! Письмо отправлено с адреса {sender} на адрес {recipient}.')
+        return True
 
-print(string_info('Capybara'))
-print(string_info('Armageddon'))
-print(is_contains('Urban', list1))
-print(is_contains('cycle', list2))
-print(calls)
+
+send_email('Это сообщение для проверки связи', 'vasyok1337@gmail.com')
+send_email('Вы видите это сообщение как лучший студент курса!', 'urban.fan@mail.ru', sender='urban.info@gmail.com')
+send_email('Пожалуйста, исправьте задание', 'urban.student@mail.ru', sender='urban.teacher@mail.uk')
+send_email('Напоминаю самому себе о вебинаре', 'urban.teacher@mail.ru', sender='urban.teacher@mail.ru')
