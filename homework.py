@@ -1,142 +1,54 @@
-from time import sleep
+from random import choice
 
 
-class User:
-    """
-        Класс пользователей, содержащий аттрибуты: логин, пароль, возраст
-    """
-    def __init__(self, nickname, password, age):
-        self.nickname = nickname
-        self.age = age
-        self.password = hash(password)
+class Vehicle:
 
-    def __str__(self):
-        return self.nickname
+    __COLOR_VARIANTS = ['green', 'gray', 'serebro']
 
-
-class Video:
-    """
-        Класс видео, содержащий аттрибуты: название, продолжительность, текущее время, возрастное ограничение
-    """
-    def __init__(self, title, duration, time_now = 0, adult_mode = False):
-        self.title = title
-        self.duration = duration
-        self.time_now = time_now
-        self.adult_mode = adult_mode
-
-
-class UrTube:
-    """
-        Класс ЮрТуба, содержащий аттрибуты: текущего пользователя (User), список пользователей (User),
-        список видео (Video)
-    """
-    def __init__(self, current_user=None, users = [], videos = []):
-        self.current_user = current_user
-        self.users = users
-        self.videos = videos
-
-    def log_in(self, nickname, password):
-        correct_nickname = False
-        correct_password = False
-        for user in self.users:
-            if nickname == user.nickname:
-                correct_nickname = True
-            if password == user.password:
-                correct_password = True
-
-            if correct_password and correct_nickname:
-                self.current_user = user
-                print(f"Приветствуем, {nickname}")
-                break
-
-            if correct_password or correct_password:
-                if not correct_nickname:
-                    print("Пользователь не найден!")
-                elif not correct_password:
-                    print("Неверный пароль!")
-                break
-
-    def register(self, nickname, password, age):
-        nickname_exist = False
-        for user in self.users:
-            if nickname == user.nickname:
-                nickname_exist = True
-                break
-
-        if not nickname_exist:
-            self.current_user = User(nickname, password, age)
-            self.users.append(self.current_user)
-
-            print(f"Пользователь '{nickname}' успешно добавлен!")
+    def __init__(self, owner, model, color, engine_power):
+        self.owner = owner
+        self.__model = model
+        self.__engine_power = engine_power
+        if color.lower() in self.__COLOR_VARIANTS:
+            self.__color = color
         else:
-            print(f"Пользователь '{nickname}' уже существует!")
+            self.__color = choice(self.__COLOR_VARIANTS)
+            print(f'Невозможно создать машину с цветом {color}. Машина была создана в цвете {self.__color}')
 
-    def log_out(self):
-        self.current_user = None
+    def get_model(self):
+        return f'Модель: {self.__model}'
 
-    def add(self, *other):
-        for video in other:
-            if video.title not in self.videos:
-                self.videos.append(video)
-                print("Видео успешно добавлено!")
-            else:
-                print(f"Видео {video.title} уже существует!")
+    def get_horsepower(self):
+        return f'Мощность двигателя: {self.__engine_power}'
 
-    def get_videos(self, word):
-        word = word.lower()
-        founded_videos = []
-        for video in self.videos:
-            if word in video.title.lower():
-                founded_videos.append(video.title)
+    def get_color(self):
+        return f'Цвет: {self.__color}'
 
-        return founded_videos
+    def print_info(self):
+        print(f"{self.get_model()}\n{self.get_horsepower()}\n{self.get_color()}" \
+               f"\nВладелец: {self.owner}")
 
-    def watch_video(self, film):
-        video_exist = False
-        video_index = None
-        for i in range(len(self.videos)):
-            if film == self.videos[i].title:
-                video_index = i
-                video_exist = True
-                break
-
-        if video_exist:
-            if not self.current_user:
-                print("Войдите в аккаунт, чтобы смотреть видео :)")
-            elif self.videos[video_index].adult_mode and self.current_user.age < 18:
-                print("Вам нет 18 лет, пожалуйста покиньте страницу :с")
-            else:
-                for i in range(self.videos[video_index].duration):
-                    self.videos[video_index].time_now += 1
-                    print(self.videos[video_index].time_now, end=' ')
-                    #sleep(1)
-                print("Видео закончено!")
-                self.videos[video_index].time_now = 0
+    def set_color(self, new_color):
+        if new_color.lower() in self.__COLOR_VARIANTS:
+            self.__color = new_color
         else:
-            print(f"Видео '{film}' не найдено!")
+            print(f"Нельзя изменить цвет на '{new_color}'")
 
 
-ur = UrTube()
-v1 = Video('Лучший язык программирования 2024 года', 200)
-v2 = Video('Для чего девушкам парень программист?', 10, adult_mode=True)
+class Sedan(Vehicle):
+    __PASSENGERS_LIMIT = 5
 
-# Добавление видео
-ur.add(v1, v2)
 
-# Проверка поиска
-print(ur.get_videos('лучший'))
-print(ur.get_videos('ПРОГ'))
+# Текущие цвета __COLOR_VARIANTS = ['blue', 'red', 'green', 'black', 'white']
+vehicle1 = Sedan('Fedos', 'Toyota Mark II', 'blue', 500)
 
-# Проверка на вход пользователя и возрастное ограничение
-ur.watch_video('Для чего девушкам парень программист?')
-ur.register('vasya_pupkin', 'lolkekcheburek', 13)
-ur.watch_video('Для чего девушкам парень программист?')
-ur.register('urban_pythonist', 'iScX4vIJClb9YQavjAgF', 25)
-ur.watch_video('Для чего девушкам парень программист?')
+# Изначальные свойства
+vehicle1.print_info()
 
-# Проверка входа в другой аккаунт
-ur.register('vasya_pupkin', 'F8098FM8fjm9jmi', 55)
-print(ur.current_user)
+# Меняем свойства (в т.ч. вызывая методы)
+vehicle1.set_color('Pink')
+vehicle1.set_color('serebro')
+vehicle1.owner = 'Vasyok'
 
-# Попытка воспроизведения несуществующего видео
-ur.watch_video('Лучший язык программирования 2024 года!')
+# Проверяем что поменялось
+vehicle1.print_info()
