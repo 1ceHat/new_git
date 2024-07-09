@@ -1,64 +1,43 @@
-class Animal:
+class Product:
 
-    def __init__(self, name, alive=True, fed=False):
+    def __init__(self, name: str, weight: float, category: str):
         self.name = name
-        self.alive = alive
-        self.fed = fed
+        self.weight = weight
+        self.category = category
+
+    def __str__(self):
+        return f"{self.name}, {self.weight}, {self.category}"
 
 
-class Plant:
+class Shop:
 
-    def __init__(self, name, edible=False):
-        self.name = name
-        self.edible = edible
+    def __init__(self, file_name: str):
+        self.__file_name = file_name
 
+    def get_products(self):
+        file = open(self.__file_name, 'r')
+        text = file.read()
+        file.close()
+        return text
 
-class Mammal(Animal):
-
-    def eat(self, food: Plant):
-        if food.edible:
-            self.fed = True
-            print(f"{self.name} съел {food.name}")
-        else:
-            self.alive = False
-            print(f"{self.name} не стал есть {food.name} и умер")
-
-
-class Predator(Animal):
-
-    def eat(self, food: Plant):
-        if food.edible:
-            self.fed = True
-            print(f"{self.name} съел {food.name}")
-        else:
-            self.alive = False
-            print(f"{self.name} не стал есть {food.name} и умер")
+    def add(self, *products: Product):
+        for product in products:
+            file = open(self.__file_name, 'a')
+            text = self.get_products()
+            if product.name.lower() not in text.lower():
+                file.write(str(product)+'\n')
+            else:
+                print(f'Продукт {product.name} уже есть в магазине' )
+            file.close()
 
 
-class Flower(Plant):
-    pass
+s1 = Shop('products.txt')
+p1 = Product('Potato', 50.5, 'Vegetables')
+p2 = Product('Spaghetti', 3.4, 'Groceries')
+p3 = Product('Potato', 5.5, 'Vegetables')
 
+print(p2) # __str__
 
-class Fruit(Plant):
+s1.add(p1, p2, p3)
 
-    def __init__(self, name):
-        self.name = name
-        self.edible = True
-
-
-a1 = Predator('Волк с Уолл-Стрит')
-a2 = Mammal('Хатико')
-p1 = Flower('Цветик семицветик')
-p2 = Fruit('Заводной апельсин')
-
-print(a1.name)
-print(p1.name)
-
-print(a1.alive)
-print(a2.fed)
-a1.eat(p1)
-a2.eat(p2)
-print(a1.alive)
-print(a2.fed)
-
-# Что произошло: Хищник попытался съесть цветок и погиб, млекопитающее съело фрукт и насытилось.
+print(s1.get_products())
