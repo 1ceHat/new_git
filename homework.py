@@ -1,51 +1,34 @@
-class WordsFinder:
+team1_num = 6
+team2_num = 6
+score1 = 40
+score2 = 42
+team1_time = 1552.512
+team2_time = 2153.31451
+tasks_total = score2+score1
+time_total = team1_time+team2_time
+time_avg = round(time_total/tasks_total, 3)
 
-    def __init__(self, *files_name):
-        self.file_names = list(files_name)
+# Использование %
+string1 = 'В команде Мастера кода участников: %d' % team1_num
+string2 = 'Итого сегодня в командах участников: %d и %d' % (team1_num, team2_num)
+print(string1+'\n'+string2)
 
-    def __remove_punctuation(self, string):
-        symbols = [',', '.', '=', '!', '?', ';', ':', ' -', '\n', ' —']
-        modified_string = string.lower()
+# Использование format()
+string1 = "Команда Волшебники данных решила задач: {score2}!".format(score2=score2)
+string2 = "Волшебники данных решили задачи за {time2} с".format(time2=team2_time)
+print(string1+'\n'+string2)
 
-        for symbol in symbols:
-            modified_string = modified_string.replace(symbol, '')
+# Использование f-строк
+if score1 > score2:
+    challenge_result = 'команда Мастера кода!'
+elif score1 < score2:
+    challenge_result = 'команда Волшебники Данных!'
+else:
+    challenge_result = 'НИЧЬЯ!'
+string1 = f'Команды решили {score1} и {score2}'
+string2 = f'Результат битвы: победила {challenge_result}'
 
-        return modified_string
+print(string1+'\n'+string2)
 
-    def get_all_words(self):
-        dict_words = {}
-        for file_name in self.file_names:
-            list_words = []
-            with open(file_name, encoding='utf-8') as file:
-                for line in file:
-                    line = self.__remove_punctuation(line)
-                    for word in line.split(' '):
-                        if word == '':
-                            continue
-                        list_words.append(word)
-            dict_words[file_name] = list_words
-        return dict_words
-
-    def find(self, word):
-        dict_words = self.get_all_words()
-        dict_founded_words = {}
-        for file, words in dict_words.items():
-            word_position = words.index(word.lower())
-            if word_position > -1:
-                dict_founded_words[file] = word_position + 1
-        return dict_founded_words
-
-    def count(self, word):
-        dict_words = self.get_all_words()
-        dict_founded_words = {}
-        for file, words in dict_words.items():
-            dict_founded_words[file] = words.count(word.lower())
-        return dict_founded_words
-
-
-finder1 = WordsFinder('Walt Whitman - O Captain! My Captain!.txt',
-                      'Rudyard Kipling - If.txt',
-                      'Mother Goose - Monday’s Child.txt')
-print(finder1.get_all_words())
-print(finder1.find('the'))
-print(finder1.count('the'))
+string1 = f"Сегодня было решено {tasks_total} задач, в среднем по {time_avg} секунды на задачу!"
+print(string1)
