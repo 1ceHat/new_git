@@ -1,11 +1,11 @@
-first_strings = ['Elon', 'Musk', 'Programmer', 'Monitors', 'Variable']
-second_strings = ['Task', 'Git', 'Comprehension', 'Java', 'Computer', 'Assembler']
-
-first_result = [len(x) for x in first_strings if len(x) >= 5]
-second_result = [(x, y) for x in first_strings for y in second_strings if len(x) == len(y)]
-third_result = {x: len(x) for x in (first_strings + second_strings) if not len(x) % 2}
+first = ['Strings', 'Student', 'Computers']
+second = ['Строка', 'Урбан', 'Компьютер']
 
 
-print(first_result)
-print(second_result)
-print(third_result)
+first_result = (len(x)-len(y) for x, y in zip(first, second) if len(x) != len(y))
+
+max_len = max(len(first), len(second))
+second_result = (len(first[x]) == len(second[x]) for x in range(max_len))
+
+print(list(first_result))
+print(list(second_result))
