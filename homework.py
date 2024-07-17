@@ -1,61 +1,9 @@
-class IncorrectVinNumber(Exception):
-    def __init__(self, message):
-        self.message = message
+def apply_all_func(int_list, *functions):
+    result = {}
+    for function in functions:
+        result[function.__name__] = function(int_list)
+    return result
 
 
-class IncorrectCarNumbers(Exception):
-    def __init__(self, message):
-        self.message = message
-
-
-class Car:
-
-    def __init__(self, model, vin, numbers):
-        self.model = model
-        if self.__is_valid_vin(vin):
-            self.__vin = vin
-
-        if self.__is_valid_numbers(numbers):
-            self.__numbers = numbers
-
-    def __is_valid_vin(self, new_vin):
-        if not isinstance(new_vin, int):
-            raise IncorrectVinNumber('Некорректный тип vin номер')
-        if new_vin not in range(1000000, 10000000):
-            raise IncorrectVinNumber('Неверный диапазон для vin номера')
-        return True
-
-    def __is_valid_numbers(self, new_numbers):
-        if not isinstance(new_numbers, str):
-            raise IncorrectCarNumbers('Некорректный тип данных для номеров')
-        if len(new_numbers) != 6:
-            raise IncorrectCarNumbers('Неверная длина номера')
-        return True
-
-
-try:
-    first = Car('Model1', 1000000, 'f123dj')
-except IncorrectVinNumber as exc:
-    print(exc.message)
-except IncorrectCarNumbers as exc:
-    print(exc.message)
-else:
-    print(f'{first.model} успешно создан')
-
-try:
-    second = Car('Model2', 300, 'т001тр')
-except IncorrectVinNumber as exc:
-    print(exc.message)
-except IncorrectCarNumbers as exc:
-    print(exc.message)
-else:
-    print(f'{second.model} успешно создан')
-
-try:
-    third = Car('Model3', 2020202, 'нет номера')
-except IncorrectVinNumber as exc:
-    print(exc.message)
-except IncorrectCarNumbers as exc:
-    print(exc.message)
-else:
-    print(f'{third.model} успешно создан')
+print(apply_all_func([6, 20, 15, 9], max, min))
+print(apply_all_func([6, 20, 15, 9], len, sum, sorted))
