@@ -1,17 +1,26 @@
-def all_variants(text):
-    len_slice = 0
-    length = len(text)
-    while len_slice <= length:
-        for i in range(length):
-            cur_slice = text[i:i+len_slice]
-            for j in range(i+len_slice, length):
-                if text[j] not in cur_slice:
-                    yield cur_slice + text[j]
-            if len_slice == 0:
+def is_prime(func):
+    def wrapper(*args):
+        res = func(*args)
+        num_sqrt = int(res ** 0.5)
+        prime = 'Простое'
+        delit = []
+        for i in range(1, num_sqrt + 1):
+            if res % i == 0:
+                delit.append(i)
+                delit.append(res // i)
+            if len(delit) > 2:
+                prime = 'Составное'
                 break
-        len_slice += 1
+        print(prime)
+        return res
+
+    return wrapper
 
 
-a = all_variants('abcdefghgklmnopqrstuvwxyz')
-for i in a:
-    print(i)
+@is_prime
+def sum_three(a, b, c):
+    return a + b + c
+
+
+result = sum_three(3, 3, 6)
+print(result)
