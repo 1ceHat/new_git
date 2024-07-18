@@ -1,34 +1,58 @@
-from random import choice
-
-first = 'Мама мыла раму'
-second = 'Рамена мало было'
-
-result_lambda = list(map(lambda x, y: x == y, first, second))
-print(result_lambda)
-def get_advanced_writer(file_name):
-
-    def write_everything(*data_set):
-        with open(file_name, 'w', encoding='utf-8') as file:
-            for data in data_set:
-                file.write(str(data)+'\n')
-
-    return write_everything
+class StepValueError(ValueError):
+    pass
 
 
-write = get_advanced_writer('example.txt')
-write('Это строчка', ['А', 'это', 'уже', 'число', 5, 'в', 'списке'])
+class Iterator:
+    def __init__(self, start, stop, step=1):
+        self.start = start
+        self.stop = stop
+        if step == 0:
+            raise StepValueError('Шаг не может быть равен 0!')
+        else:
+            if self.__is_valid_step(step):
+                self.step = step
+        self.pointer = self.start
+
+    def __iter__(self):
+        self.pointer = self.start
+        return self
+
+    def __next__(self):
+        self.pointer += self.step
+        if (self.step < 0 and self.pointer < self.stop+self.step) \
+                or (self.step > 0 and self.pointer > self.stop+self.step):
+            raise StopIteration
+        return self.pointer-self.step
+
+    def __is_valid_step(self, step):
+        if (self.stop - self.start < 0 and step > 0) or \
+                (self.stop - self.start > 0 and step < 0):
+            raise StepValueError('Неверный шаг для диапазона!')
+        return True
 
 
-class MysticBall:
+try:
+    iter1 = Iterator(100, 200, 0)
+    for i in iter1:
+        print(i, end=' ')
+except StepValueError:
+    print('Шаг указан неверно')
 
-    def __init__(self, *words):
-        self.words = words
+iter2 = Iterator(-5, 1)
+iter3 = Iterator(6, 15, 2)
+iter4 = Iterator(5, 1, -1)
+iter5 = Iterator(10, 1, -1)
 
-    def __call__(self):
-        return choice(self.words)
 
-
-first_ball = MysticBall('Да', 'Нет', 'Наверное')
-print(first_ball())
-print(first_ball())
-print(first_ball())
+for i in iter2:
+    print(i, end=' ')
+print()
+for i in iter3:
+    print(i, end=' ')
+print()
+for i in iter4:
+    print(i, end=' ')
+print()
+for i in iter5:
+    print(i, end=' ')
+print()
