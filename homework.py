@@ -1,33 +1,43 @@
-from threading import Thread
+from threading import Thread, Lock
 import time
 
-class Knight(Thread):
 
-    def __init__(self, name: str, power: int):
-        super().__init__()
-        self.name = name
-        self.power = power
+class BankAccount:
+    __lock = Lock()
 
-    def run(self):
-        print(f"{self.name}, на нас напали!")
-        count_enemy = 100
-        count_day = 0
-        while count_enemy > 0:
-            count_enemy -= self.power
-            time.sleep(1)
-            count_day += 1
-            print(f'{self.name} сражается {count_day}, осталось {count_enemy} воинов')
+    def __init__(self, amount: int = 20_000_000):
+        self.__amount = amount
 
-        print(f'{self.name} одержал победу спустя {count_day} дней (дня)!')
+    def deposit(self, amount):
+        with BankAccount.__lock:
+            self.__amount += amount
+            print(f'Зачислено: {amount}. Баланс: {self.__amount}')
+
+    def withdraw(self, amount):
+        with BankAccount.__lock:
+            if self.__amount - amount < 0:
+                print(f'Недостаточно средств! Не хватает: {amount - self.__amount}')
+            else:
+                self.__amount -= amount
+                print(f'Списано: {amount}. Баланс: {self.__amount}')
 
 
-first_knight = Knight('Sir Lancelot', 10)
-second_knight = Knight('Sir Galahad', 20)
+def deposit_task(account, amount):
+    for _ in range(100):
+        account.deposit(amount)
 
-first_knight.start()
-second_knight.start()
 
-first_knight.join()
-second_knight.join()
+def withdraw_task(account, amount):
+    for _ in range(100):
+        account.withdraw(amount)
 
-print('Все битвы закончились!')
+
+account = BankAccount()
+deposit_thread = Thread(target=deposit_task, args=(account, 100_000))
+withdraw_thread = Thread(target=withdraw_task, args=(account, 200_000))
+
+deposit_thread.start()
+withdraw_thread.start()
+
+deposit_thread.join()
+withdraw_thread.join()
