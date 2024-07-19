@@ -1,80 +1,53 @@
-import queue
-from time import sleep
-from threading import Thread
+from multiprocessing import Pool
 
 
-class Table:
+class WarehouseManager:
 
-    def __init__(self, number: int, is_busy: bool = False):
-        self.number = number
-        self.is_busy = is_busy
+    data = {}
 
-
-class Cafe:
-
-    def __init__(self, tables: list):
-        self.__queue = queue.Queue()
-        self.tables = tables
-
-    def customer_arrival(self):
-        self.__queue.maxsize = 20
-        for i in range(1, self.__queue.maxsize+1):
-            print(f'Посетитель номер {i} прибыл.')
-            self.serve_customer(Customer(i))
-            sleep(1)
-
-        while not self.__queue.empty():
-            sleep(10)
-            self.serve_customer(self.__queue.get())
-
-
-    def serve_customer(self, customer):
-        free_table = 0
-        for table in self.tables:
-            if not table.is_busy:
-                free_table = table.number
-                break
-
-        if not free_table:
-            print(f'⌛Посетитель {customer.number} ожидает свободного столика')
-            self.__queue.put(customer)
-        else:
-            if self.__queue.empty():
-                customer.cafe, customer.table = self, self.tables[free_table-1]
-                customer.start()
+    def process_request(self, request):
+        product, operation, amount = request
+        if operation == 'receipt':
+            if product not in WarehouseManager.data:
+                WarehouseManager.data.update({product: amount})
             else:
-                print(f'⌛Посетитель {customer.number} ожидает свободного столика\n')
-                change_customer = self.__queue.get()
-                self.__queue.put(customer)
-                change_customer.cafe, change_customer.table = self, self.tables[free_table - 1]
-                change_customer.start()
+                WarehouseManager.data[product] += amount
+            print(f'На склад привезен "{product}" в размере {amount} единиц.')
+        elif operation == 'shipment':
+            if product in WarehouseManager.data:
+                if amount > WarehouseManager.data[product]:
+                    print('Недостаточно товара на складе!')
+                else:
+                    WarehouseManager.data[product] -= amount
+                    print(f'Со склада отгружен "{product}" в размере {amount} единиц.')
+            else:
+                print('Такого товара на складе нет!')
+
+    def run(self, requests):
+        print(requests)
+        amount_requests = len(requests)
+        processes = []
+
+        with Pool(processes=1) as pool:
+            pool.map(self.process_request, requests)
+        # for request in requests:
+        #     self.process_request(request)
+        #     processes.append(Process(target=self.process_request, args=(request,)))
+        #
+        # for process in processes:
+        #     process.start()
+        #     process.join()
 
 
-class Customer(Thread):
+if __name__ == '__main__':
+    manager = WarehouseManager()
 
-    def __init__(self, number, cafe=None, table=None):
-        super().__init__()
-        self.number = number
-        self.table = table
-        self.cafe = cafe
+    requests = [
+        ('potato', 'receipt', 10),
+        ('bananas', 'receipt', 10),
+        ('potato', 'shipment', 5)
+    ]
 
+    manager.run(requests)
 
-    def run(self):
-        print(f"✅✅Посетитель {self.number} сел за стол {self.table.number}")
-        self.cafe.tables[self.table.number-1].is_busy = True
-        sleep(5)
-        self.cafe.tables[self.table.number - 1].is_busy = False
-        print(f'Посетитель {self.number} покушал и ушёл')
-
-
-table1 = Table(1)
-table2 = Table(2)
-table3 = Table(3)
-tables = [table1, table2, table3]
-
-cafe = Cafe(tables)
-
-customer_arrival_thread = Thread(target=cafe.customer_arrival)
-customer_arrival_thread.start()
-
-customer_arrival_thread.join()
+    print(manager.data)
