@@ -1,41 +1,33 @@
 from threading import Thread
 import time
 
+class Knight(Thread):
 
-def wite_words(word_count, file_name):
-    with open(file_name, 'w', encoding='utf-8') as file:
-        for i in range(word_count):
-            file.write(f'Какое-то слово №{i+1}\n')
-            time.sleep(0.1)
-    print(f'Запись в файл "{file_name}" завершена')
+    def __init__(self, name: str, power: int):
+        super().__init__()
+        self.name = name
+        self.power = power
+
+    def run(self):
+        print(f"{self.name}, на нас напали!")
+        count_enemy = 100
+        count_day = 0
+        while count_enemy > 0:
+            count_enemy -= self.power
+            time.sleep(1)
+            count_day += 1
+            print(f'{self.name} сражается {count_day}, осталось {count_enemy} воинов')
+
+        print(f'{self.name} одержал победу спустя {count_day} дней (дня)!')
 
 
-start = time.time()
-wite_words(10, 'example1.txt')
-wite_words(30, 'example2.txt')
-wite_words(200, 'example3.txt')
-wite_words(100, 'example4.txt')
-end = time.time()
-res_func = (end-start)
+first_knight = Knight('Sir Lancelot', 10)
+second_knight = Knight('Sir Galahad', 20)
 
+first_knight.start()
+second_knight.start()
 
-fi_thr = Thread(target=wite_words, args=(10, 'example5.txt'))
-se_thr = Thread(target=wite_words, args=(30, 'example6.txt'))
-th_thr = Thread(target=wite_words, args=(200, 'example7.txt'))
-fo_thr = Thread(target=wite_words, args=(100, 'example8.txt'))
+first_knight.join()
+second_knight.join()
 
-start = time.time()
-fi_thr.start()
-se_thr.start()
-th_thr.start()
-fo_thr.start()
-
-fi_thr.join()
-se_thr.join()
-th_thr.join()
-fo_thr.join()
-end = time.time()
-res_thr = (end-start)
-
-print(f'Время затраченное одним потоком: {res_func} с\nВремя затраченное мультипотоком: {res_thr} с')
-
+print('Все битвы закончились!')
