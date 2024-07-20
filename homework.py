@@ -1,51 +1,37 @@
-from multiprocessing import Process, Pool, Manager
+from matplotlib import pyplot as plt
 
 
-class WarehouseManager:
-
-    def __init__(self):
-        self.data = Manager().dict()
-
-    def process_request(self, request):
-        product, operation, amount = request
-        if operation == 'receipt':
-            if product not in self.data:
-                self.data.update({product: amount})
-            else:
-                self.data[product] += amount
-            print(f'На склад привезен "{product}" в размере {amount} единиц.')
-        elif operation == 'shipment':
-            if product in self.data:
-                if amount > self.data[product]:
-                    print('Недостаточно товара на складе!')
-                else:
-                    self.data[product] -= amount
-                    print(f'Со склада отгружен "{product}" в размере {amount} единиц.')
-            else:
-                print('Такого товара на складе нет!')
-
-    def run(self, requests):
-        amount_requests = len(requests)
-        processes = []
-        for request in requests:
-            processes.append(Process(target=self.process_request, args=(request,)))
-
-        for process in processes:
-            process.start()
-            process.join()
+# N' = -lamda*N
+def f(t, N, lam=0.0866434):  # Функция вычисления значения N' (вероятность радиоактивного распада)
+    return -1 * lam * N
 
 
-if __name__ == '__main__':
-    manager = WarehouseManager()
+def eyler(t0=0, N0=0, t1=16, num=100, lam=1): # Функция эйлера
+    dt = (t1 - t0) / num
 
-    requests = [
-        ("product1", "receipt", 100),
-        ("product2", "receipt", 150),
-        ("product1", "shipment", 30),
-        ("product3", "receipt", 200),
-        ("product2", "shipment", 50)
-    ]
+    t = [t0]
+    N = [N0]
 
-    manager.run(requests)
+    for i in range(num):
+        t.append(t[i] + dt)
+        N.append(N[i] + dt * f(t[i], N[i], lam))
 
-    print(manager.data)
+    return t, N
+
+
+lam = []
+i = 0.1
+while i < 1:
+    lam.append(i)
+    i += 0.1
+
+t = []
+N = []
+#N0 = int(input('Введите кол-во ядер в момент t=0: '))
+N0 = 10
+for i in lam:
+    t, N = eyler(0, N0, 16, 100, i)
+    plt.plot(t, N) # создаём график со значениями по x и y (t, N)
+    plt.xlabel('Время') # меняем название оси Ох
+    plt.ylabel('Количество ядер') # меняем название оси Оу
+plt.show()
