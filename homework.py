@@ -1,35 +1,42 @@
-from runner import Runner
+from runner import Runner, Tournament
 import unittest
 
-class RunnerTest(unittest.TestCase):
 
-    def test_walk(self):
-        test_runner = Runner('F')
+class TournamentTest(unittest.TestCase):
 
-        for _ in range(10):
-            test_runner.walk()
+    @classmethod
+    def setUpClass(cls):
+        cls.all_results = []
 
-        self.assertEqual(test_runner.distance, 50)
+    def setUp(self):
+        self.runner1 = Runner('Усэйн', 10)
+        self.runner2 = Runner('Андрей', 9)
+        self.runner3 = Runner('Ник', 3)
 
-    def test_run(self):
-        test_runner = Runner('F')
+    @classmethod
+    def tearDownClass(cls):
+        for result in cls.all_results:
+            print(result)
 
-        for _ in range(10):
-            test_runner.run()
+    def test_start1(self):
+        tour = Tournament(90, self.runner1, self.runner3)
+        result = tour.start()
+        self.all_results.append(result)
+        self.assertTrue(list(result.values())[-1] == 'Ник')
 
-        self.assertEqual(test_runner.distance, 100)
+    def test_start2(self):
+        tour = Tournament(90, self.runner2, self.runner3)
+        result = tour.start()
+        self.all_results.append(result)
+        self.assertTrue(list(result.values())[-1] == 'Ник')
 
-    def test_challenge(self):
-        test_runner1 = Runner('F')
-        test_runner2 = Runner('G')
-
-        for _ in range(10):
-            test_runner1.run()
-            test_runner2.walk()
-
-        self.assertNotEqual(test_runner1.distance, test_runner2)
+    def test_start3(self):
+        tour = Tournament(90, self.runner1, self.runner2, self.runner3)
+        result = tour.start()
+        self.all_results.append(result)
+        self.assertTrue(list(result.values())[-1] == 'Ник')
 
 
 if __name__ == "__main__":
-
-    unittest.main()
+    print()
+    #unittest.main()
