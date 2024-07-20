@@ -1,25 +1,22 @@
-from time import sleep, time
+from aiogram import Bot, Dispatcher, types, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
 
+__API = open('secret.txt', 'r').read()
+bot = Bot(token=__API)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
-async def start_programm(name, power):
-    print(f'Силач {name} начал соревнование')
-    for i in range(5):
-        await asyncio.sleep(1/power)
-        print(f'Силач {name} поднял шар номер {i+1}')
+Help = '''
+'''
 
-    print(f'Силач {name} закончил соревнования')
+@dp.message_handler(commands=['start'])
+async def start(message):
+    print('Привет! Я бот помогающий твоему здоровью.')
 
-
-async def start_tournament():
-    task1 = asyncio.create_task(start_programm('Я', 1))
-    task2 = asyncio.create_task(start_programm('Он', 0.7))
-    task3 = asyncio.create_task(start_programm('Она', 0.1))
-
-    await task1
-    await task2
-    await task3
+@dp.message_handler()
+async def all_messages(messages):
+    print('Введите команду /start, стобы начать.')
 
 
-asyncio.run(start_tournament())
-
+if __name__ == "__main__":
+    executor.start_polling(dp)
