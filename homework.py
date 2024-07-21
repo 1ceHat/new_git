@@ -1,39 +1,22 @@
-from datetime import datetime
+def extract_image_links(html):
+    links = []
+    index_img = 0
+    html = html.replace('>', '')
+    list_img = html.split('<img ')
+    for img in list_img:
+        if '.jpg' in img or '.png' in img or '.gif' in img or '.jpeg' in img:
+            first_apost = img.index("'")
+            second_apost = img.rindex("'")
+            links.append(img[first_apost+1:second_apost])
+
+    return links
 
 
-class SuperDate(datetime):
 
-    def __init__(self, year, month, day, time):
-        self.year_ = year
-        self.month_ = month
-        self.day_ = day
-        self.time_ = time
-
-    def get_season(self):
-        winter = {12, 1, 2}
-        summer = {6, 7, 8}
-        autumn = {9, 10, 11}
-        spring = {3, 4, 5}
-        if self.month in winter:
-            return 'Winter'
-        elif self.month in summer:
-            return 'Summer'
-        elif self.month in autumn:
-            return 'Autumn'
-        else:
-            return 'Spring'
-
-    def get_time_of_day(self):
-        if self.time_ in range(7):
-            return 'Night'
-        if self.time_ in range(6, 13):
-            return 'Morning'
-        if self.time_ in range(12, 19):
-            return 'Day'
-        if self.time_ in range(18, 24):
-            return 'Evening'
-
-
-a = SuperDate(2024, 1, 22, 22)
-print(a.get_season())
-print(a.get_time_of_day())
+sample_html = "<img src='https://example.com/image1.jpg'> <img src='http://example.com/image2.png'> <img src='https://example.com/image3.gif'>"
+image_links = extract_image_links(sample_html)
+if image_links:
+  for image_link in image_links:
+    print(image_link)
+else:
+  print("Нет ссылок с картинками в HTML тексте.")
