@@ -1,22 +1,44 @@
-def extract_image_links(html):
-    links = []
-    index_img = 0
-    html = html.replace('>', '')
-    list_img = html.split('<img ')
-    for img in list_img:
-        if '.jpg' in img or '.png' in img or '.gif' in img or '.jpeg' in img:
-            first_apost = img.index("'")
-            second_apost = img.rindex("'")
-            links.append(img[first_apost+1:second_apost])
+def write_holiday_cities(first_letter):
+    visited_cities = []
+    wish_visit = []
 
-    return links
+    with open('travel-notes.csv') as file:
+        for line in file:
+            line = line.replace('\n', '')
+            person, visited, wish = line.split(',')
+
+            if person.lower()[0] == first_letter.lower():
+                for city in visited.split(';'):
+                    if city is not None and city not in visited_cities:
+                        visited_cities.append(city)
+
+                for city in wish.split(';'):
+                    if city is not None and city not in wish_visit:
+                        wish_visit.append(city)
+
+    visited_cities.sort()
+    wish_visit.sort()
+    never_visited = [x for x in wish_visit if x not in visited_cities]
+
+    with open('holiday.csv', 'w', encoding='utf-8') as file:
+        count = 0
+        for list_ in [visited_cities, wish_visit, never_visited]:
+            if count == 0:
+                string = 'Посещенные города: ,'
+            elif count == 1:
+                string = 'Хотят посетить: ,'
+            elif count == 2:
+                string = 'Никогда не посещали: ,'
+            count += 1
+
+            for city in list_:
+                string += city + ';'
+            if string[-1] == ';':
+                string = string[:-1]
+            print(string)
+            file.write(string+'\n')
+        print(f'Следующим городом будет: {wish_visit[0]}')
+        file.write(f'Следующим городом будет: ,{wish_visit[0]}')
 
 
-
-sample_html = "<img src='https://example.com/image1.jpg'> <img src='http://example.com/image2.png'> <img src='https://example.com/image3.gif'>"
-image_links = extract_image_links(sample_html)
-if image_links:
-  for image_link in image_links:
-    print(image_link)
-else:
-  print("Нет ссылок с картинками в HTML тексте.")
+write_holiday_cities('L')
