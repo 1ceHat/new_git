@@ -5,3 +5,5 @@
 products.txt
 secret.txt
 14Full.zip
+*.json
+*.log

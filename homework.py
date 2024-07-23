@@ -1,19 +1,20 @@
-import json
-from operator import itemgetter
+from fastapi import FastAPI
+
+app = FastAPI()
 
 
-def employees_rewrite(sort_type):
-    data = ''
-    try:
-        with open('employees.json') as file:
-            data = json.load(file)
-            sorted_json = sorted(data['employees'], key=itemgetter(sort_type))
-            data['employees'] = sorted_json
-    except:
-        raise ValueError('Bad key for sorting')
+@app.get('/')
+async def main_page():
+    return 'Главная страница'
 
-    with open(f'employees_{sort_type}_sorted.json', 'w') as file:
-        json.dump(data, file)
+@app.get('/user/admin')
+async def admin_page():
+    return 'Привет, администратор!'
 
+@app.get('/user/{user_id}')
+async def user_pages(user_id: int):
+    return f'Привет, пользователь номер {user_id}!'
 
-employees_rewrite('salary')
+@app.get('/user')
+async def user_name_page(user_name: str = 'Artem', user_age: int = 20):
+    return f'Информация о пользователе\nИмя: {user_name},  возраст: {user_age}'
